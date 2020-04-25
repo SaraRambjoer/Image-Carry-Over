@@ -2,7 +2,7 @@ import numpy
 import scipy.sparse
 
 class echo_reservoir:
-    def __init__(self, adjacency_matrix, input_producer, output_consumer, matrix_width, matrix_height, chaos_factor, decay):
+    def __init__(self, adjacency_matrix, input_producer, output_consumer, matrix_width, matrix_height, chaos_factor):
         self.adjacency_matrix = adjacency_matrix
         self.input_producer = input_producer
         self.output_consumer = output_consumer
@@ -11,14 +11,30 @@ class echo_reservoir:
         self.matrix_height = matrix_height
         self.node_values = numpy.zeros([matrix_width * matrix_height], dtype=float)
         self.chaos_factor = chaos_factor
-        self.decay = decay
 
     def do_timestep(self):
-        update = scipy.sparse.csr_matrix.dot(self.adjacency_matrix, self.node_values)/(self.matrix_width * self.matrix_height) # removing division causes overflow in line 19 - not sure how but node values greater than 1 seem to be carried over form previous iterations?
+        update = scipy.sparse.csr_matrix.dot(self.adjacency_matrix, self.node_values) # removing division causes overflow in line 19 - not sure how but node values greater than 1 seem to be carried over form previous iterations?
+        check = update >= 1.0
+        if True in check:
+            update = (update - min(update)) / (
+                        max(update) - min(update))  # map to range [0, 1], prevents overflow
         self.node_values = self.input_producer(self.timestep) + self.chaos_factor*update*(1-update)  # logistic function w/ chaos valued parameter
         check = self.node_values >= 1.0
         if True in check:
             self.node_values = (self.node_values-min(self.node_values))/(max(self.node_values) - min(self.node_values)) # map to range [0, 1], prevents overflow
+        self.output_consumer(self.node_values)
+        self.timestep += 1
+
+    def do_timestep_old(self):
+        # The version of do timestep that seemed to do edge-detection and such
+        update = scipy.sparse.csr_matrix.dot(self.adjacency_matrix,
+                                             self.node_values)(self.matrix_height*self.matrix_width)  # removing division causes overflow in line 19 - not sure how but node values greater than 1 seem to be carried over form previous iterations?
+        self.node_values = self.input_producer(self.timestep) + self.chaos_factor * update * (
+                    1 - update)  # logistic function w/ chaos valued parameter
+        check = self.node_values >= 1.0
+        if True in check:
+            self.node_values = (self.node_values - min(self.node_values)) / (
+                        max(self.node_values) - min(self.node_values))  # map to range [0, 1], prevents overflow
         self.output_consumer(self.node_values)
         self.timestep += 1
 

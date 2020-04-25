@@ -5,7 +5,7 @@ from PIL import Image
 import time
 
 class Loader:
-    def __init__(self, width, height):
+    def __init__(self, width, height, alpha, minVal, maxVal, chaosVal):
         # Handles each band seperatly.
         self.red_loaded = False
         self.green_loaded = False
@@ -18,6 +18,10 @@ class Loader:
         self.display_red = None
         self.display_green = None
         self.display_blue = None
+        self.alpha = alpha
+        self.minVal = minVal
+        self.maxVal = maxVal
+        self.chaosVal = chaosVal
 
     def load(self, path):
         image = Image.open(path).resize((self.target_width, self.target_height))
@@ -56,7 +60,7 @@ class Loader:
         if self.display_red is not None and self.display_green is not None and self.display_blue is not None:
             display_image = Image.merge("RGB", (self.display_red, self.display_green, self.display_blue))
             display_image.show()
-            display_image.save(str(int(time.time())) + ".png") # Save as timestamp to avoid issues
+            display_image.save(str(self.alpha) + "-" + str(self.minVal) + "-" + str(self.maxVal) + "-"+ str(int(time.time())) + "-" + str(self.chaosVal) + ".png") # Save as timestamp to avoid issues
             self.display_red, self.display_green, self.display_blue = None, None, None
 
 """
@@ -67,11 +71,16 @@ height = int(input("Set image height: "))
 width = int(input("Set image width: "))
 chaos_factor = float(input("Set chaos factor: ")) # See edge of chaos and logistic map
 """
-alpha = 0.6
-min_connection = 0.0 # I tried varying these hyper-parameters but didn't get that much difference in results
-height = 150 # size of each adjacency matrix is (height*width, height*width) so computation scales poorly for larger image sizes
-width = 150
-chaos_factor = 3.89321543123134709238745  # this value is supposed to be on the edge of chaos for the logistic function
+alpha = 0.0005 # Connectiveness value
+# A lower alpha seems to do about the same thing as a higher alpha but with a lower max_connection parameter.
+# It therefore seems more prudent to have a lower alpha value and instead change max/min parameters because these
+# do not impact computational complexity.
+min_connection = 0.0
+height = 600 # size of each adjacency matrix is (height*width, height*width) so computation scales poorly for larger
+# image sizes - however lower alpha values, which work with standard timestep function for reservoir allows for far larger image resolutions
+width = 600
+chaos_factor = 3.89321543123134709238745  # this value is supposed to be on the edge of chaos
+# edge of chaos value: 3.89321543123134709238745
 max_connection = 1.0
 # Does each color band separately
 adjacency_matrix1 = transition_matrix_generator.generate_adjacency_matrix(alpha, min_connection, max_connection,
@@ -80,11 +89,10 @@ adjacency_matrix2 = transition_matrix_generator.generate_adjacency_matrix(alpha,
                                                                          width, height)
 adjacency_matrix3 = transition_matrix_generator.generate_adjacency_matrix(alpha, min_connection, max_connection,
                                                                          width, height)
-decay = 0.8
-loader = Loader(width, height)
-reservoir1 = echo_reservoir.echo_reservoir(adjacency_matrix1, lambda t: loader.get("R", t), lambda a: loader.display_image("R", a), width, height, chaos_factor, decay)
-reservoir2 = echo_reservoir.echo_reservoir(adjacency_matrix1, lambda t: loader.get("G", t), lambda a: loader.display_image("G", a), width, height, chaos_factor, decay)
-reservoir3 = echo_reservoir.echo_reservoir(adjacency_matrix1, lambda t: loader.get("B", t), lambda a: loader.display_image("B", a), width, height, chaos_factor, decay)
+loader = Loader(width, height, alpha, min_connection, max_connection, chaos_factor)
+reservoir1 = echo_reservoir.echo_reservoir(adjacency_matrix1, lambda t: loader.get("R", t), lambda a: loader.display_image("R", a), width, height, chaos_factor)
+reservoir2 = echo_reservoir.echo_reservoir(adjacency_matrix1, lambda t: loader.get("G", t), lambda a: loader.display_image("G", a), width, height, chaos_factor)
+reservoir3 = echo_reservoir.echo_reservoir(adjacency_matrix1, lambda t: loader.get("B", t), lambda a: loader.display_image("B", a), width, height, chaos_factor)
 
 
 while True:
