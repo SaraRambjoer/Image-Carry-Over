@@ -1,5 +1,5 @@
 # Image-Carry-Over
-A small experiment for implementing an echo state reservoir and using previous image inputs to influence the new image input for purposes of generating cool art. 
+A small experiment inspired by reservoir computing using previous image inputs to influence the new image input for purposes of generating cool art. It is only inspired by reservoir computing because it only contains a reservoir but no neural network that is trained to interpret the reservoir, the reservoir output is direcly used in a stationary function to produce the output image. 
 
 
 The implementation attempts to use sparse numpy adjacency matrices to carry data from the previous timestep over to the new one. The algorithm basically does 
