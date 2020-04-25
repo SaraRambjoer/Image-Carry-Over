@@ -3,9 +3,13 @@ A small experiment for implementing an echo state reservoir and using previous i
 
 
 The implementation attempts to use sparse numpy adjacency matrices to carry data from the previous timestep over to the new one. The algorithm basically does 
+
  U = dot(Node_Value_Matrix, Adjacency_Matrix)
+ 
  Map U to values between 0 and 1
+ 
  Node_Value_Matrix = Input_Node_Values + self.chaos_factor * U * (1 - U) 
+ 
  Map Node_Value_Matrix to values between 0 and 1
  
  The code also contains an older algorithm which did not map U to values between 0 and 1 but instead divided it by the amount of elements in the adjacency matrix. The newer version allows for far lower values of alpha while still giving interesting output. 
@@ -24,6 +28,8 @@ chaos_factor = parameter for the logistic function (or more specifically, a deri
 
 There are four image files included. Their naming convention is 
 alpha-min_connection-max_connection-timestamp.png
+There are also examples in this twitter thread: 
+https://twitter.com/JonRambj/status/1254033803137503232
 
 If chaos_factor is not given it's value is 3.89321543123134709238745. IMO this value produced the most interesting results. 
 
