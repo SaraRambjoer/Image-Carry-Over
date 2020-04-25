@@ -21,9 +21,7 @@ height and width each image should be mapped to
 
 chaos_factor = parameter for the logistic function (or more specifically, a derivative of it used in population modeling dn/dr = n(1-n) where n is population size and r is timestep). Parameter can also be viewed as a weighting between the data in the new input image and the reservoir output when producing the new output image. 
 
-See the "example_images" folder for example results. Image name format goes: 
-alpha-min_connection-max_connection-timestamp-chaos_factor.png
-
 If chaos_factor is not given it's value is 3.89321543123134709238745. IMO this value produced the most interesting results. 
 
 One limitation to how interesting images the images produced is that by the law of large numbers the random values in the adjacency matrix actually gives similar outputs for any input image each time for the same parameters. If one were to divide up the image into smaller areas and handle each of these seperately one may be able to generate more interesting results. For example, instead of having one large adjacency matrix, an idea could be to instead randomly select some points when initializing the reservoir and dividing the image up into a Voroni diagram depending on the connection values and the distance from the points and handling each Voroni region seperately. 
+
