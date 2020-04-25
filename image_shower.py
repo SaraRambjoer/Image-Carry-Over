@@ -52,11 +52,11 @@ class Loader:
 
     def display_image(self, bandString, image_array):
         if "R" in bandString:
-            self.display_red = Image.fromarray((image_array * 365.0).astype(numpy.uint8).reshape(self.target_width, self.target_height)).resize((self.target_width*10, self.target_height*10))
+            self.display_red = Image.fromarray((image_array * 365.0).astype(numpy.uint8).reshape(self.target_width, self.target_height)).resize((self.target_width, self.target_height))
         elif "G" in bandString:
-            self.display_green = Image.fromarray((image_array * 365.0).astype(numpy.uint8).reshape(self.target_width, self.target_height)).resize((self.target_width*10, self.target_height*10))
+            self.display_green = Image.fromarray((image_array * 365.0).astype(numpy.uint8).reshape(self.target_width, self.target_height)).resize((self.target_width, self.target_height))
         elif "B" in bandString:
-            self.display_blue = Image.fromarray((image_array * 365.0).astype(numpy.uint8).reshape(self.target_width, self.target_height)).resize((self.target_width*10, self.target_height*10))
+            self.display_blue = Image.fromarray((image_array * 365.0).astype(numpy.uint8).reshape(self.target_width, self.target_height)).resize((self.target_width, self.target_height))
         if self.display_red is not None and self.display_green is not None and self.display_blue is not None:
             display_image = Image.merge("RGB", (self.display_red, self.display_green, self.display_blue))
             display_image.show()
