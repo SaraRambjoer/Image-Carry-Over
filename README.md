@@ -40,3 +40,15 @@ Pontes-Filho, Sidney; Yazidi, Anis; Zhang, Jianhua; Hammer, Hugo Lewi; Mello, Gu
 A general representation of dynamical systems for reservoir computing. I: Proceedings of the 9th Joint IEEE International Conference on Development and Learning and on Epigenetic Robotics. IEEE 2019 ISBN 978-1-5386-8129-9. s. -
 OSLOMET NTNU 
 link: https://wo.cristin.no/as/WebObjects/cristin.woa/wo/0.Profil.29.25.2.3.15.1.1.3
+
+
+The program also includes a basic python command line interface which in image_shower.py:
+exit - leave program 
+reload - reload last loaded image, all of its colorbands
+reload R - reload the red color band on the last loaded image
+reload B - ...
+reload G - ...
+step - Do a timestep in the reservoir and output the combination of the reservoir values and the input image if any were loaded on this timestep before calling step. 
+load - say that you want to load an image. Will be prompted to write in path to image. Type in the relative path name of the image file. (easiest if image file is in same folder as the code, then you just write ex. "cat.png")
+stepseveral - say that you want several timesteps to be done. you will be prompted for how many. Input an integer number above or equal to 0. (nothing happens if you input 0)
+reloadstepseveral - same as above, except last loaded image is reloaded before each timestep. 
